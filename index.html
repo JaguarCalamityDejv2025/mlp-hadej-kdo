@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hádej Kdo - MLP Edice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .display-box {
+            width: 100%;
+            height: 280px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px;
+            background-color: #fafafa;
+        }
+        .display-box img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .display-box p {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-option {
+            background-color: #e0e0e0;
+            border: 1px solid #adadad;
+            color: #000000;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-option:hover {
+            background-color: #d0d0d0;
+        }
+        .btn-reset {
+            background-color: #ff79c6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h1>Vítej ve hře Hádej Kdo - MLP Edice</h1>
+        <div id="questionText" class="question-text">1. Je tvá postava z G4 nebo G5?</div>
+
+        <div class="display-box" id="displayBox"></div>
+
+        <div class="buttons-container" id="buttonsContainer"></div>
+
+        <button class="btn-reset" onclick="resetGame()" id="resetBtn" style="display:none;">Nová hra</button>
+    </div>
+
+    <script>
+        const ponici = [
+            { jmeno: "Applejack", fotka: "obrázky/Applejack.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barva: "Oranzova" },
+            { jmeno: "Fluttershy", fotka: "obrázky/Fluttershy.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barva: "Zluta" },
+            { jmeno: "Pinkie Pie", fotka: "obrázky/Pinkie_Pie.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barva: "Ruzova" },
+            { jmeno: "Rainbow Dash", fotka: "obrázky/Rainbow_Dash.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barva: "Modra" },
+            { jmeno: "Rarity", fotka: "obrázky/Rarity.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barva: "Bila" },
+            { jmeno: "Twilight Sparkle", fotka: "obrázky/Twilight_Sparkle.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barva: "Fialova" },
+            { jmeno: "Spike", fotka: "obrázky/Spike.png", gen: "G4", pohlavi: "Muz", druh: "Drak", barva: "Fialova" },
+            { jmeno: "Starlight Glimmer", fotka: "obrázky/Starlight_glimmer.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barva: "Fialova" },
+            { jmeno: "Sunny Starscout", fotka: "obrázky/Sunny_Starscout.png", gen: "G5", pohlavi: "Zena", druh: "Pozemsky", barva: "Oranzova" },
+            { jmeno: "Izzy Moonbow", fotka: "obrázky/Izzy_Moonbow.png", gen: "G5", pohlavi: "Zena", druh: "Jednorozec", barva: "Fialova" },
+            { jmeno: "Pipp Petals", fotka: "obrázky/Pipp_Petals.png", gen: "G5", pohlavi: "Zena", druh: "Pegas", barva: "Ruzova" },
+            { jmeno: "Zipp Storm", fotka: "obrázky/Zipp_Storm.png", gen: "G5", pohlavi: "Zena", druh: "Pegas", barva: "Bila" },
+            { jmeno: "Hitch Trailblazer", fotka: "obrázky/Hitch_Trailblazer.png", gen: "G5", pohlavi: "Muz", druh: "Pozemsky", barva: "Zluta" },
+            { jmeno: "Misty Brightdawn", fotka: "obrázky/Misty_Brightdawn.png", gen: "G5", pohlavi: "Zena", druh: "Jednorozec", barva: "Modra" }
+        ];
+
+        const kroky = [
+            {
+                otazka: "1. Je tvá postava z G4 nebo G5?",
+                klic: "gen",
+                moznosti: [
+                    { text: "G4", hodnota: "G4" },
+                    { text: "G5", hodnota: "G5" }
+                ]
+            },
+            {
+                otazka: "2. Jaké pohlaví je tvoje postava?",
+                klic: "pohlavi",
+                moznosti: [
+                    { text: "Muž", hodnota: "Muz" },
+                    { text: "Žena", hodnota: "Zena" }
+                ]
+            },
+            {
+                otazka: "3. Jaký druh je tvoje postava?",
+                klic: "druh",
+                moznosti: [
+                    { text: "Pozemský poník", hodnota: "Pozemsky" },
+                    { text: "Jednorožec", hodnota: "Jednorozec" },
+                    { text: "Pegas", hodnota: "Pegas" },
+                    { text: "Alicorn", hodnota: "Alicorn" },
+                    { text: "Drak", hodnota: "Drak" }
+                ]
+            },
+            {
+                otazka: "4. Jakou barvu těla má tvá postava?",
+                klic: "barva",
+                moznosti: [
+                    { text: "Fialová", hodnota: "Fialova" },
+                    { text: "Růžová", hodnota: "Ruzova" },
+                    { text: "Modrá", hodnota: "Modra" },
+                    { text: "Žlutá", hodnota: "Zluta" },
+                    { text: "Oranžová", hodnota: "Oranzova" },
+                    { text: "Bílá", hodnota: "Bila" },
+                ]
+            }
+        ];
+
+        let aktualniKrok = 0;
+        let filtrPonici = [];
+
+        function resetGame() {
+            aktualniKrok = 0;
+            filtrPonici = [...ponici];
+            document.getElementById("displayBox").innerHTML = "";
+            document.getElementById("resetBtn").style.display = "none";
+            nactiKrok();
+        }
+
+        function nactiKrok() {
+            if (aktualniKrok >= kroky.length || filtrPonici.length <= 1) {
+                zobrazVysledek();
+                return;
+            }
+
+            const krok = kroky[aktualniKrok];
+            document.getElementById("questionText").innerText = krok.otazka;
+
+            const btnBox = document.getElementById("buttonsContainer");
+            btnBox.innerHTML = "";
+
+            krok.moznosti.forEach(m => {
+                const maKandidata = filtrPonici.some(p => p[krok.klic] === m.hodnota);
+                if (maKandidata) {
+                    const btn = document.createElement("button");
+                    btn.className = "btn-option";
+                    btn.innerText = m.text;
+                    btn.onclick = () => vybratOdpoved(krok.klic, m.hodnota);
+                    btnBox.appendChild(btn);
+                }
+            });
+        }
+
+        function vybratOdpoved(klic, hodnota) {
+            filtrPonici = filtrPonici.filter(p => p[klic] === hodnota);
+            aktualniKrok++;
+            nactiKrok();
+        }
+
+        function zobrazVysledek() {
+            document.getElementById("buttonsContainer").innerHTML = "";
+            document.getElementById("resetBtn").style.display = "inline-block";
+
+            const display = document.getElementById("displayBox");
+
+            if (filtrPonici.length === 1) {
+                const p = filtrPonici[0];
+                document.getElementById("questionText").innerText = "Tvůj poník je:";
+                display.innerHTML = `
+                    <img src="${p.fotka}" alt="${p.jmeno}">
+                    <p>${p.jmeno}</p>
+                `;
+            } else if (filtrPonici.length > 1) {
+                document.getElementById("questionText").innerText = "Odpovídá více postavám!";
+                display.innerHTML = `<p>Nalezeno ${filtrPonici.length} možností.</p>`;
+            } else {
+                document.getElementById("questionText").innerText = "Nikoho jsem nenalezl :-(";
+                display.innerHTML = `<p>Žádná postava neodpovídá této kombinaci.</p>`;
+            }
+        }
+
+        window.onload = resetGame;
+    </script>
+</body>
+</html>
