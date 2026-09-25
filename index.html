@@ -7,33 +7,43 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
+            /* Žlutočervený přechod pozadí */
+            background: linear-gradient(135deg, #ff7a3d, #ffdd44);
             color: #000000;
             text-align: center;
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
         }
         .app-container {
             max-width: 500px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
-            border-radius: 12px;
+            width: 100%;
+            /* Jemně obarvená vnitřní karta, aby ladila s pozadím */
+            background-color: #fff8eb;
+            border: 2px solid #ffcc66;
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         h1 {
             font-size: 24px;
             margin-bottom: 20px;
+            color: #222;
         }
         .question-text {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 15px;
+            color: #333;
         }
         .display-box {
             width: 100%;
             height: 280px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #ffd280;
             border-radius: 12px;
             margin-bottom: 20px;
             display: flex;
@@ -42,7 +52,7 @@
             justify-content: center;
             box-sizing: border-box;
             padding: 10px;
-            background-color: #fafafa;
+            background-color: #ffffff;
         }
         .display-box img {
             max-width: 100%;
@@ -60,29 +70,40 @@
             flex-direction: column;
             gap: 10px;
         }
+        /* Modrá tlačítka pro volby */
         .btn-option {
-            background-color: #e0e0e0;
-            border: 1px solid #adadad;
-            color: #000000;
-            padding: 12px;
+            background-color: #3b82f6;
+            border: none;
+            color: #ffffff;
+            padding: 14px;
             font-size: 16px;
-            border-radius: 6px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
         }
         .btn-option:hover {
-            background-color: #d0d0d0;
+            background-color: #2563eb;
         }
+        .btn-option:active {
+            transform: scale(0.98);
+        }
+        /* Tlačítko pro novou hru */
         .btn-reset {
-            background-color: #ff79c6;
+            background-color: #3b82f6;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 12px 20px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .btn-reset:hover {
+            background-color: #2563eb;
         }
     </style>
 </head>
@@ -101,26 +122,25 @@
 
     <script>
         const ponici = [
-	{ jmeno: "Twilight Sparkle", fotka: "obrázky/Twilight_Sparkle.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Fialova", barvaHrivy: "Tmave modra z pruhy" },
-        { jmeno: "Applejack", fotka: "obrázky/Applejack.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Oranzova", barvaHrivy: "Svetle zluta" },
-	{ jmeno: "Rainbow Dash", fotka: "obrázky/Rainbow_Dash.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Modra", barvaHrivy: "Duhova" },
-  	{ jmeno: "Pinkie Pie", fotka: "obrázky/Pinkie_Pie.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Ruzova", barvaHrivy: "Tmave ruzova" },
-        { jmeno: "Fluttershy", fotka: "obrázky/Fluttershy.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Zluta", barvaHrivy: "Svetle ruzova" },
-      	{ jmeno: "Rarity", fotka: "obrázky/Rarity.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Bila" , barvaHrivy: "Tmave fialova" },
-        { jmeno: "Spike", fotka: "obrázky/Spike.png", gen: "G4", pohlavi: "Muz", druh: "Drak", barva: "Fialova" barvaHrivy: "Svetle zelena" },
-        { jmeno: "Sunny Starscout", fotka: "obrázky/Sunny_Starscout.png", gen: "G5", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Oranzova", barvaHrivy: "Tmave fialova a tmave ruzova" },
-            { jmeno: "Izzy Moonbow", fotka: "obrázky/Izzy_Moonbow.png", gen: "G5", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Fialova", barvaHrivy: " },
+            { jmeno: "Twilight Sparkle", fotka: "obrázky/Twilight_Sparkle.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Fialova", barvaHrivy: "Tmave modra z pruhy" },
+            { jmeno: "Applejack", fotka: "obrázky/Applejack.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Oranzova", barvaHrivy: "Svetle zluta" },
+            { jmeno: "Rainbow Dash", fotka: "obrázky/Rainbow_Dash.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Modra", barvaHrivy: "Duhova" },
+            { jmeno: "Pinkie Pie", fotka: "obrázky/Pinkie_Pie.png", gen: "G4", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Ruzova", barvaHrivy: "Tmave ruzova" },
+            { jmeno: "Fluttershy", fotka: "obrázky/Fluttershy.png", gen: "G4", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Zluta", barvaHrivy: "Svetle ruzova" },
+            { jmeno: "Rarity", fotka: "obrázky/Rarity.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Bila", barvaHrivy: "Tmave fialova" },
+            { jmeno: "Spike", fotka: "obrázky/Spike.png", gen: "G4", pohlavi: "Muz", druh: "Drak", barvaSrsti: "Fialova", barvaHrivy: "Svetle zelena" },
+            { jmeno: "Sunny Starscout", fotka: "obrázky/Sunny_Starscout.png", gen: "G5", pohlavi: "Zena", druh: "Pozemsky", barvaSrsti: "Oranzova", barvaHrivy: "Tmave fialova a tmave ruzova" },
+            { jmeno: "Izzy Moonbow", fotka: "obrázky/Izzy_Moonbow.png", gen: "G5", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Fialova", barvaHrivy: "Tmave Modrofialova" },
             { jmeno: "Pipp Petals", fotka: "obrázky/Pipp_Petals.png", gen: "G5", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Ruzova", barvaHrivy: "Fialova" },
             { jmeno: "Zipp Storm", fotka: "obrázky/Zipp_Storm.png", gen: "G5", pohlavi: "Zena", druh: "Pegas", barvaSrsti: "Bila", barvaHrivy: "Vicebarevna" },
             { jmeno: "Hitch Trailblazer", fotka: "obrázky/Hitch_Trailblazer.png", gen: "G5", pohlavi: "Muz", druh: "Pozemsky", barvaSrsti: "Zluta", barvaHrivy: "Tmave zelena" },
             { jmeno: "Misty Brightdawn", fotka: "obrázky/Misty_Brightdawn.png", gen: "G5", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Modra", barvaHrivy: "Vicebarevna" },
-	{ jmeno: "Starlight Glimmer", fotka: "obrázky/Starlight_glimmer.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Fialova", barvaHrivy: "Fialova se svetle modrym pruhem" },
+            { jmeno: "Starlight Glimmer", fotka: "obrázky/Starlight_glimmer.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Fialova", barvaHrivy: "Fialova se svetle modrym pruhem" },
             { jmeno: "princess Luna", fotka: "obrázky/Princess_Luna.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Tmave Modra", barvaHrivy: "Tmave modra" },
-	{ jmeno: "princess Celestia", fotka: "obrázky/Princess_Celestia.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Bila" , barvaHrivy: "Vicebarevna"},
-	{ jmeno: "Tempest Shadow", fotka: "obrázky/Tempest_Shadow.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Tmave Fialova", barvaHrivy: "Tmave ruzova" },
-	{ jmeno: "Opaline Arcana", fotka: "obrázky/Opaline_Arcana.png", gen: "G5", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Svetle Fialova", barvaHrivy: "Stribrite bila se svetle modrym pruhem" },
-	{ jmeno: "Sunset Shimmer", forka: "obrázky/Sunset_Shimmer.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Žlutooranžová", barvaHrivy: "Zluta a cervena"},
-
+            { jmeno: "princess Celestia", fotka: "obrázky/Princess_Celestia.png", gen: "G4", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Bila", barvaHrivy: "Vicebarevna" },
+            { jmeno: "Tempest Shadow", fotka: "obrázky/Tempest_Shadow.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Tmave Fialova", barvaHrivy: "Tmave ruzova" },
+            { jmeno: "Opaline Arcana", fotka: "obrázky/Opaline_Arcana.png", gen: "G5", pohlavi: "Zena", druh: "Alicorn", barvaSrsti: "Svetle Fialova", barvaHrivy: "Stribrite bila se svetle modrym pruhem" },
+            { jmeno: "Sunset Shimmer", fotka: "obrázky/Sunset_Shimmer.png", gen: "G4", pohlavi: "Zena", druh: "Jednorozec", barvaSrsti: "Žlutooranžová", barvaHrivy: "Zluta a cervena" }
         ];
 
         const kroky = [
@@ -161,31 +181,33 @@
                     { text: "Žlutá", hodnota: "Zluta" },
                     { text: "Oranžová", hodnota: "Oranzova" },
                     { text: "Bílá", hodnota: "Bila" },
-		{text: "Tmavě Modrá", hodnota: "Tmave Modra"},
-		{text: "Tmavě Fialová", hodnota: "Tmave Fialova"},
-		{text: "Světle Fialová", hodnota: "Svetle Fialova"},
+                    { text: "Tmavě Modrá", hodnota: "Tmave Modra" },
+                    { text: "Tmavě Fialová", hodnota: "Tmave Fialova" },
+                    { text: "Světle Fialová", hodnota: "Svetle Fialova" }
+                ]
+            },
+            {
+                otazka: "5. Jakou barvu hřívy (či vlasů) má tvá postava?",
+                klic: "barvaHrivy",
+                moznosti: [
+                    { text: "Tmavě modrá s pruhy", hodnota: "Tmave modra z pruhy" },
+                    { text: "Světle žlutá", hodnota: "Svetle zluta" },
+                    { text: "Duhová", hodnota: "Duhova" },
+                    { text: "Tmavě růžová", hodnota: "Tmave ruzova" },
+                    { text: "Světle růžová", hodnota: "Svetle ruzova" },
+                    { text: "Tmavě fialová", hodnota: "Tmave fialova" },
+                    { text: "Světle zelená", hodnota: "Svetle zelena" },
+                    { text: "Tmavě fialová a tmavě růžová", hodnota: "Tmave fialova a tmave ruzova" },
+                    { text: "Tmavě Modrofialová", hodnota: "Tmave Modrofialova" },
+                    { text: "Fialová", hodnota: "Fialova" },
+                    { text: "Vícebarevná", hodnota: "Vicebarevna" },
+                    { text: "Tmavě zelená", hodnota: "Tmave zelena" },
+                    { text: "Fialová se světle modrým pruhem", hodnota: "Fialova se svetle modrym pruhem" },
+                    { text: "Tmavě modrá", hodnota: "Tmave modra" },
+                    { text: "Stříbřitě bílá se světle modrým pruhem", hodnota: "Stribrite bila se svetle modrym pruhem" },
+                    { text: "Žlutá a červená", hodnota: "Zluta a cervena" }
                 ]
             }
-		otazka "5. Jakou barvu hrivy (či vlasů) má tvá postava?",
-		klic: "barvaHrivy",
-		moznosti: [
-			{text: "Tmavě modrá s pruhy", hodnota: "Tmave modra z pruhy"},
-			{text: "Světle žlutá", hodnota: "Svetle zluta"},
-			{text: "Duhová", hodnota: "Duhova"},
-			{text: "Tmavě růžová", hodnota: "Tmave ruzova"},
-			{text: "Světle růžová", hodnota: "Svetle ruzova"},
-			{text: "Tmavě fialová", hodnota: "Tmave fialova"},
-			{text: "Světle zelená", hodnota: "Svetle zelena"},
-			{text: "Tmavě fialová a tmavě růžová" , hodnota: "Tmave fialova a tmave ruzova"},
-			{text: "Tmavě Modrofialová", hodnota: "Tmave Modrofialova"},
-			{text: "Fialová", hodnota: "Fialova" },
-			{text: "Vícebarevná", hodnota: "Vicebarevna"}
-			{text: "Tmavě zelená", hodnota: "Tmave zelena"}
-			{text: "Fialová se světle modrým pruhem", hodnota: "Fialova se svetle modrym pruhem"}
-			{text: "Tmavě modrá", hodnota: "Tmave modra"}
-			{text: "Stříbřitě bílá se světle modrým pruhem", hodnota: "Stribrite bila se svetle modrym pruhem"}
-			{text: "Žlutá a červená", hodnota: "Zluta a cervena"}
-			]
         ];
 
         let aktualniKrok = 0;
